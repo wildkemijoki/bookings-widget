@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Widget Demo</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@headlessui/react@1.7.18/dist/headlessui.umd.js"></script>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <div id="booking-widget"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        try {
+          // Initialize the widget with the provided API credentials
+          new window.BookingWidget({
+            apiKey: 'f3c11240636974be5ed37deecca46bf8',
+            apiUrl: 'https://bookings.wildkemijoki.cz/api/v1',
+            listID: '68013ac9e1c23efb44d861e0',
+            container: '#booking-widget',
+            theme: {
+              primary: '#4F46E5',
+              secondary: '#818CF8'
+            }
+          });
+        } catch (error) {
+          console.error('Failed to initialize BookingWidget:', error);
+          document.getElementById('booking-widget').innerHTML = 
+            '<div style="color: red; padding: 20px;">Failed to initialize booking widget. Please check the console for details.</div>';
+        }
+      });
+    </script>
+  </body>
+</html>

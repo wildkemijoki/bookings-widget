@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Widget Demo</title>
+  </head>
+  <body>
+    <div id="booking-widget"></div>
+    <script type="module">
+      import BookingWidget from '/src/widget.tsx';
+      import '/src/styles.css';
+
+      // Initialize the widget with the provided API credentials
+      new BookingWidget({
+        apiKey: 'f3c11240636974be5ed37deecca46bf8',
+        apiUrl: 'https://bookings.wildkemijoki.cz/api/v1',
+        listID: '68013ac9e1c23efb44d861e0',
+        container: '#booking-widget',
+        theme: {
+          primary: '#4F46E5',
+          secondary: '#818CF8'
+        }
+      });
+    </script>
+  </body>
+</html>
