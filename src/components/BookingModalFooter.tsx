@@ -49,7 +49,7 @@ export function BookingModalFooter({
 
         // Validate phone number
         let localNumber = phone;
-        const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
+        const selectedCountry = countries.find(c => c.code === nationality);
         const dialCode = selectedCountry?.dial_code || '';
         if (dialCode && phone.startsWith(dialCode)) {
           localNumber = phone.slice(dialCode.length);
