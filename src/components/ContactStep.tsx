@@ -58,7 +58,7 @@ export function ContactStep({
       return 'Phone number is required';
     }
     if (digits.length < 8 || digits.length > 11) {
-      return 'Phone number must be between 8 and 11 digits';
+      return 'Phone number must be between 8 and 11 digits (excluding country code)';
     }
     return '';
   };
@@ -78,12 +78,12 @@ export function ContactStep({
     const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
     const dialCode = selectedCountry?.dial_code || '';
     
-    // Combine dial code with phone number for the booking state
-    const fullPhone = dialCode ? `${dialCode} ${sanitizedValue}` : sanitizedValue;
-    
+    // Validate only the local part (without country code)
     const error = validatePhone(sanitizedValue);
     setErrors(prev => ({ ...prev, phone: error }));
     
+    // Combine dial code with phone number for the booking state
+    const fullPhone = dialCode ? `${dialCode} ${sanitizedValue}` : sanitizedValue;
     onUpdateContact('phone', fullPhone);
   };
 
