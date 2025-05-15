@@ -1,5 +1,6 @@
 import React from 'react';
 import type { BookingState } from '../types';
++import { countries } from '../data/countries';
 import type { BookingActions } from '../hooks/useBookingState';
 
 interface BookingModalFooterProps {
