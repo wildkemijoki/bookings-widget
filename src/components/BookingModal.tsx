@@ -128,10 +128,10 @@ export function BookingModal({
   return (
     <div className="modal-overlay" onClick={(e) => e.stopPropagation()}>
       <div 
-        className="modal w-full md:w-[85%] max-w-[1200px]" 
+        className="modal w-full md:w-[85%] max-w-[1200px] max-h-[85vh] flex flex-col" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-content">
+        <div className="modal-content overflow-y-auto flex-1">
           {renderContent()}
         </div>
         <BookingModalFooter
