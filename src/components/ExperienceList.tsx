@@ -49,9 +49,12 @@ export function ExperienceList({ experiences, onExperienceSelect }: ExperienceLi
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {experience.shortDescription || experience.description?.substring(0, 100) + '...'}
-                </p>
+                <div 
+                  className="text-sm text-gray-600 mb-3 line-clamp-2"
+                  dangerouslySetInnerHTML={{ 
+                    __html: experience.shortDescription || experience.description?.substring(0, 100) + '...'
+                  }}
+                />
                 <div className="flex items-center text-sm text-gray-500">
                   <Clock className="w-4 h-4 mr-1" />
                   <span>{experience.duration} minutes</span>
