@@ -256,7 +256,7 @@ export function Calendar({
               </div>
               <div className="text-xs font-medium text-indigo-600">
                 {console.log(daySlots)}
-                From {formatPrice(Math.min(...daySlots.map(s => s.price)), experience.currency)}
+                From {formatPrice(Math.min(...daySlots.map(s => s.timeSlot?.price)), experience.currency)}
               </div>
             </div>
           )}
