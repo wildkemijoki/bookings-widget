@@ -215,9 +215,8 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                 <Clock className="w-5 h-5 mr-2" />
                 <span>{experience.duration} minutes</span>
               </div>
-              <div className="bg-gray-100 px-3 py-1.5 rounded-lg flex items-center justify-center">
+              <div className="difficulty bg-gray-100 px-3 py-1.5 rounded-lg flex items-center justify-center">
                 <span className="ml-1 text-gray-500">difficulty:</span>
-
                   <div class="label {experience.difficulty}">
                   <svg class="icon" viewBox="0 0 32 24">
                     <rect class="bar" x="2"  y="14" width="4" height="8"/>
