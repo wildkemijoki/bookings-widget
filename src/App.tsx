@@ -2,7 +2,7 @@ import React from 'react';
 import BookingWidget from './widget';
 
 function App() {
-  root.useEffect(() => {
+  React.useEffect(() => {
     // Initialize the booking widget
     new BookingWidget({
       apiKey: 'f3c11240636974be5ed37deecca46bf8',
