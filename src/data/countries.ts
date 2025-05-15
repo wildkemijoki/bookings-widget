@@ -11,7 +11,7 @@ export interface Country {
 export const countries: Country[] = Object.entries(countriesList).map(([code, data]) => ({
   name: data.name,
   code: code,
-  dial_code: data.phone.startsWith('+') ? data.phone : `+${data.phone}`,
+  dial_code: String(data.phone).startsWith('+') ? String(data.phone) : `+${String(data.phone)}`,
   flag: data.emoji
 })).sort((a, b) => a.name.localeCompare(b.name));
 
