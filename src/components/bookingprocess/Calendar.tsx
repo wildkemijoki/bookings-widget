@@ -211,7 +211,7 @@ export function Calendar({
         >
           <div className="px-2 py-1 bg-white border-b border-gray-100">
             <span className="text-sm font-medium text-gray-400">
-              {`${day}.${currentMonth.getMonth() || 12}`}
+              {`${day}.${currentMonth.getMonth() || 12}.`}
             </span>
           </div>
         </div>
@@ -295,7 +295,7 @@ export function Calendar({
         >
           <div className="px-2 py-1 bg-white border-b border-gray-100">
             <span className="text-sm font-medium text-gray-400">
-              {`${i}.${(currentMonth.getMonth() + 2) % 12 || 12}`}
+              {`${i}.${(currentMonth.getMonth() + 2) % 12 || 12}.`}
             </span>
           </div>
         </div>
