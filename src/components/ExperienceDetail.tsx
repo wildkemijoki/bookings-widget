@@ -218,7 +218,7 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
               <div className="difficulty bg-gray-100 px-3 py-1.5 rounded-lg flex items-center justify-center">
                 <span className="ml-1 text-gray-500">difficulty: </span>
                 <span className="font-bold">{experience.difficulty}</span>
-                <div class="{experience.difficulty}">
+                <div class="ml-5 {experience.difficulty}">
                   <svg class="icon" viewBox="0 0 32 24">
                     <rect class="bar" x="2"  y="14" width="4" height="8"/>
                     <rect class="bar" x="8"  y="10" width="4" height="12"/>
