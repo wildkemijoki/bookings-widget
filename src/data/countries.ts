@@ -34,6 +34,3 @@ const additionalCountries: Country[] = [
 // Combine and sort all countries
 export const allCountries: Country[] = [...countries, ...additionalCountries]
   .sort((a, b) => a.name.localeCompare(b.name));
-
-// Export the combined list as the default countries
-export { allCountries as countries };
