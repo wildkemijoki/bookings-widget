@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Check, ChevronDown, Search } from 'lucide-react';
 import { Combobox } from '@headlessui/react';
 import type { Experience, BookingState } from '../../types';
@@ -7,7 +7,7 @@ import { countries } from '../../data/countries';
 interface ContactStepProps {
   experience: Experience;
   bookingState: BookingState;
-  onUpdateContact: (field: keyof BookingState['contactDetails'], value: string | boolean) => void;
+  onUpdateContact: (field: keyof BookingState['contactDetails'], value: string | boolean, errors?: Record<string, string>) => void;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -22,13 +22,47 @@ export function ContactStep({
   const [query, setQuery] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [localPhone, setLocalPhone] = useState(() => {
-    // Initialize local phone state by removing the dial code if it exists
     const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
     if (selectedCountry && bookingState.contactDetails.phone.startsWith(selectedCountry.dial_code)) {
       return bookingState.contactDetails.phone.slice(selectedCountry.dial_code.length).trim();
     }
     return bookingState.contactDetails.phone;
   });
+
+  // Initialize validation errors on mount
+  useEffect(() => {
+    const initialErrors: Record<string, string> = {};
+    
+    if (!bookingState.contactDetails.firstName) {
+      initialErrors.firstName = 'First name is required';
+    }
+    
+    if (!bookingState.contactDetails.lastName) {
+      initialErrors.lastName = 'Last name is required';
+    }
+    
+    if (!bookingState.contactDetails.nationality) {
+      initialErrors.nationality = 'Nationality is required';
+    }
+    
+    if (!bookingState.contactDetails.email) {
+      initialErrors.email = 'Email is required';
+    } else {
+      const emailError = validateEmail(bookingState.contactDetails.email);
+      if (emailError) initialErrors.email = emailError;
+    }
+    
+    if (!bookingState.contactDetails.phone) {
+      initialErrors.phone = 'Phone number is required';
+    } else {
+      const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
+      const phoneError = validatePhone(bookingState.contactDetails.phone, selectedCountry?.dial_code);
+      if (phoneError) initialErrors.phone = phoneError;
+    }
+
+    setErrors(initialErrors);
+    onUpdateContact('firstName', bookingState.contactDetails.firstName, initialErrors);
+  }, []);
 
   const filteredCountries = useMemo(() => {
     return query === ''
@@ -51,65 +85,63 @@ export function ContactStep({
     return '';
   };
 
-const validatePhone = (phone: string, dialCode: string = '') => {
-  // Remove the country code if present
-  let localNumber = phone;
-  console.log('Phone:', phone);
-  if (dialCode && phone.startsWith(dialCode)) {
-    localNumber = phone.slice(dialCode.length);
-  }
-  console.log('Stripped:', localNumber)
-  
-  // Remove all non-digit characters for validation
-  const digits = localNumber.replace(/\D/g, '');
-  console.log('Digits:', digits);
-  if (!digits) {
-    return 'Phone number is required';
-  }
-  if (digits.length < 8 || digits.length > 11) {
-    return 'Phone number must be between 8 and 11 digits (excluding country code)';
-  }
-  return '';
-};
+  const validatePhone = (phone: string, dialCode: string = '') => {
+    let localNumber = phone;
+    if (dialCode && phone.startsWith(dialCode)) {
+      localNumber = phone.slice(dialCode.length);
+    }
+    
+    const digits = localNumber.replace(/\D/g, '');
+    if (!digits) {
+      return 'Phone number is required';
+    }
+    if (digits.length < 8 || digits.length > 11) {
+      return 'Phone number must be between 8 and 11 digits (excluding country code)';
+    }
+    return '';
+  };
 
   const handleEmailChange = (email: string) => {
     const error = validateEmail(email);
-    setErrors(prev => ({ ...prev, email: error }));
-    onUpdateContact('email', email, {
-      ...errors,
-      email: error
-    });
+    const newErrors = { ...errors, email: error };
+    setErrors(newErrors);
+    onUpdateContact('email', email, newErrors);
   };
 
   const handlePhoneChange = (value: string) => {
-    // Only allow digits and some formatting characters
     const sanitizedValue = value.replace(/[^\d\s-+()]/g, '');
     setLocalPhone(sanitizedValue);
     
-    // Get the current country's dial code
     const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
     const dialCode = selectedCountry?.dial_code || '';
-    
-    // Combine dial code with phone number for the booking state
     const fullPhone = dialCode ? `${dialCode} ${sanitizedValue}` : sanitizedValue;
     
-    const error = validatePhone(sanitizedValue);
-    setErrors(prev => ({ ...prev, phone: error }));
-    
-    onUpdateContact('phone', fullPhone, {
-      ...errors,
-      phone: error
-    });
+    const error = validatePhone(sanitizedValue, dialCode);
+    const newErrors = { ...errors, phone: error };
+    setErrors(newErrors);
+    onUpdateContact('phone', fullPhone, newErrors);
+  };
+
+  const handleNameChange = (field: 'firstName' | 'lastName', value: string) => {
+    const error = !value.trim() ? `${field === 'firstName' ? 'First' : 'Last'} name is required` : '';
+    const newErrors = { ...errors, [field]: error };
+    setErrors(newErrors);
+    onUpdateContact(field, value, newErrors);
   };
 
   const handleCountrySelect = (countryCode: string) => {
-    onUpdateContact('nationality', countryCode);
+    const error = !countryCode ? 'Nationality is required' : '';
+    const newErrors = { ...errors, nationality: error };
+    setErrors(newErrors);
+    onUpdateContact('nationality', countryCode, newErrors);
     
-    // Update phone number with new country code
     const selectedCountry = countries.find(c => c.code === countryCode);
     if (selectedCountry) {
       const fullPhone = `${selectedCountry.dial_code} ${localPhone}`;
-      onUpdateContact('phone', fullPhone);
+      const phoneError = validatePhone(localPhone, selectedCountry.dial_code);
+      const newErrorsWithPhone = { ...newErrors, phone: phoneError };
+      setErrors(newErrorsWithPhone);
+      onUpdateContact('phone', fullPhone, newErrorsWithPhone);
     }
   };
 
@@ -129,9 +161,14 @@ const validatePhone = (phone: string, dialCode: string = '') => {
               type="text"
               id="firstName"
               value={bookingState.contactDetails.firstName}
-              onChange={(e) => onUpdateContact('firstName', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+              onChange={(e) => handleNameChange('firstName', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 ${
+                errors.firstName ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
+            {errors.firstName && (
+              <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
+            )}
           </div>
           
           <div>
@@ -142,9 +179,14 @@ const validatePhone = (phone: string, dialCode: string = '') => {
               type="text"
               id="lastName"
               value={bookingState.contactDetails.lastName}
-              onChange={(e) => onUpdateContact('lastName', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+              onChange={(e) => handleNameChange('lastName', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 ${
+                errors.lastName ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
+            {errors.lastName && (
+              <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+            )}
           </div>
 
           <div className="sm:col-span-2">
@@ -155,7 +197,9 @@ const validatePhone = (phone: string, dialCode: string = '') => {
               <div className="relative">
                 <div className="relative w-full">
                   <Combobox.Input
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 ${
+                      errors.nationality ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     displayValue={(code: string) => countries.find(c => c.code === code)?.name || ''}
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -216,6 +260,9 @@ const validatePhone = (phone: string, dialCode: string = '') => {
                 </Combobox.Options>
               </div>
             </Combobox>
+            {errors.nationality && (
+              <p className="mt-1 text-sm text-red-500">{errors.nationality}</p>
+            )}
           </div>
 
           <div>
