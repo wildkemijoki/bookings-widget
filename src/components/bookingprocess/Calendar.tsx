@@ -251,9 +251,6 @@ export function Calendar({
           </div>
           {daySlots.length > 0 && (
             <div className="flex-1 flex flex-col items-center justify-center">
-              <div className="text-xs text-gray-600 text-center">
-                {daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available
-              </div>
               <div className="text-xs font-medium text-indigo-600 text-center">
                 From {formatPrice(Math.min(...daySlots.map(s => s.timeSlot?.price)), experience.currency)}
               </div>
