@@ -192,11 +192,29 @@ export function Calendar({
     const startDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
     const days = [];
-    
-    // Add empty cells for days before the first of the month
+
+    // Get last day of previous month
+    const lastMonthLastDay = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      0
+    ).getDate();
+
+    // Add cells for days from previous month
     for (let i = 0; i < startDay; i++) {
+      const day = lastMonthLastDay - startDay + i + 1;
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, day);
       days.push(
-        <div key={`empty-${i}`} className="h-24 rounded-lg bg-gray-50 border border-gray-100" />
+        <div 
+          key={`prev-${i}`} 
+          className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
+        >
+          <div className="px-2 py-1 bg-white border-b border-gray-100">
+            <span className="text-sm font-medium text-gray-400">
+              {`${day}.${currentMonth.getMonth() || 12}`}
+            </span>
+          </div>
+        </div>
       );
     }
 
@@ -260,6 +278,26 @@ export function Calendar({
               </div>
             </div>
           )}
+        </div>
+      );
+    }
+
+    // Calculate remaining cells needed
+    const totalCells = 42; // 6 rows × 7 days
+    const remainingCells = totalCells - (days.length);
+
+    // Add cells for days from next month
+    for (let i = 1; i <= remainingCells; i++) {
+      days.push(
+        <div 
+          key={`next-${i}`} 
+          className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
+        >
+          <div className="px-2 py-1 bg-white border-b border-gray-100">
+            <span className="text-sm font-medium text-gray-400">
+              {`${i}.${(currentMonth.getMonth() + 2) % 12 || 12}`}
+            </span>
+          </div>
         </div>
       );
     }
