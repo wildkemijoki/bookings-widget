@@ -29,40 +29,41 @@ export function ContactStep({
     return bookingState.contactDetails.phone;
   });
 
-  // Initialize validation errors on mount
+  // Validate all fields on mount and update errors
   useEffect(() => {
-    const initialErrors: Record<string, string> = {};
-    
-    if (!bookingState.contactDetails.firstName) {
-      initialErrors.firstName = 'First name is required';
-    }
-    
-    if (!bookingState.contactDetails.lastName) {
-      initialErrors.lastName = 'Last name is required';
-    }
-    
-    if (!bookingState.contactDetails.nationality) {
-      initialErrors.nationality = 'Nationality is required';
-    }
-    
-    if (!bookingState.contactDetails.email) {
-      initialErrors.email = 'Email is required';
-    } else {
-      const emailError = validateEmail(bookingState.contactDetails.email);
-      if (emailError) initialErrors.email = emailError;
-    }
-    
-    if (!bookingState.contactDetails.phone) {
-      initialErrors.phone = 'Phone number is required';
-    } else {
-      const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
-      const phoneError = validatePhone(bookingState.contactDetails.phone, selectedCountry?.dial_code);
-      if (phoneError) initialErrors.phone = phoneError;
-    }
-
-    setErrors(initialErrors);
-    onUpdateContact('firstName', bookingState.contactDetails.firstName, initialErrors);
+    validateAllFields();
   }, []);
+
+  const validateAllFields = () => {
+    const newErrors: Record<string, string> = {};
+    
+    // Validate first name
+    if (!bookingState.contactDetails.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+    
+    // Validate last name
+    if (!bookingState.contactDetails.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+    
+    // Validate nationality
+    if (!bookingState.contactDetails.nationality) {
+      newErrors.nationality = 'Nationality is required';
+    }
+    
+    // Validate email
+    const emailError = validateEmail(bookingState.contactDetails.email);
+    if (emailError) newErrors.email = emailError;
+    
+    // Validate phone
+    const selectedCountry = countries.find(c => c.code === bookingState.contactDetails.nationality);
+    const phoneError = validatePhone(bookingState.contactDetails.phone, selectedCountry?.dial_code);
+    if (phoneError) newErrors.phone = phoneError;
+
+    setErrors(newErrors);
+    onUpdateContact('firstName', bookingState.contactDetails.firstName, newErrors);
+  };
 
   const filteredCountries = useMemo(() => {
     return query === ''
@@ -76,7 +77,7 @@ export function ContactStep({
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) {
+    if (!email.trim()) {
       return 'Email is required';
     }
     if (!emailRegex.test(email)) {
