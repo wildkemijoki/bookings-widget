@@ -196,7 +196,7 @@ export function Calendar({
     // Add empty cells for days before the first of the month
     for (let i = 0; i < startDay; i++) {
       days.push(
-        <div key={`empty-${i}`} className="h-24 bg-gray-50" />
+        <div key={`empty-${i}`} className="h-24 rounded-lg bg-gray-50 border border-gray-100" />
       );
     }
 
@@ -215,7 +215,7 @@ export function Calendar({
       });
 
       // Calculate availability percentage
-      let availabilityClass = 'bg-gray-50';
+      let availabilityClass = 'bg-gray-50 border-gray-200';
       if (daySlots.length > 0) {
         const totalSpots = daySlots.reduce((sum, slot) => 
           sum + (slot.timeSlot.maxParticipants - slot.timeSlot.bookedPlaces), 0
@@ -224,11 +224,11 @@ export function Calendar({
         const availability = totalSpots / maxSpots;
 
         if (availability > 0.66) {
-          availabilityClass = 'bg-green-50 hover:bg-green-100';
+          availabilityClass = 'bg-green-50 border-green-200 hover:bg-green-100';
         } else if (availability > 0.33) {
-          availabilityClass = 'bg-yellow-50 hover:bg-yellow-100';
+          availabilityClass = 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100';
         } else {
-          availabilityClass = 'bg-red-50 hover:bg-red-100';
+          availabilityClass = 'bg-red-50 border-red-200 hover:bg-red-100';
         }
       }
 
@@ -236,21 +236,25 @@ export function Calendar({
         <div
           key={day}
           onClick={() => daySlots.length > 0 && onSelectDate(date)}
-          className={`h-24 p-2 transition-colors cursor-pointer flex flex-col ${
+          className={`h-24 rounded-lg border transition-all cursor-pointer overflow-hidden ${
             isSelected
-              ? 'ring-2 ring-indigo-600 bg-indigo-50'
+              ? 'ring-2 ring-indigo-600 border-indigo-200 bg-indigo-50'
               : daySlots.length > 0
               ? availabilityClass
-              : 'bg-gray-50 cursor-not-allowed'
+              : 'bg-gray-50 border-gray-200 cursor-not-allowed'
           }`}
         >
-          <div className={`text-sm font-medium ${
-            isToday ? 'text-indigo-600' : 'text-gray-900'
+          <div className={`px-2 py-1 bg-white border-b ${
+            isSelected ? 'border-indigo-200' : 'border-inherit'
           }`}>
-            {day}
+            <span className={`text-sm font-medium ${
+              isToday ? 'text-indigo-600' : 'text-gray-900'
+            }`}>
+              {day}
+            </span>
           </div>
           {daySlots.length > 0 && (
-            <div className="flex-1 flex flex-col items-center justify-center">
+            <div className="flex-1 flex flex-col items-center justify-center p-2">
               <div className="text-xs font-medium text-indigo-600 text-center">
                 From {formatPrice(Math.min(...daySlots.map(s => s.timeSlot?.price)), experience.currency)}
               </div>
