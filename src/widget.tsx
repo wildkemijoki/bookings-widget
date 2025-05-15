@@ -48,7 +48,8 @@ function Widget({ config }: { config: WidgetConfig }) {
 }
 
 class BookingWidgetInitializer {
-  private static instances = new Map<string, Root>();
+  private static rootInstance: Root | null = null;
+  private static containerElement: Element | null = null;
 
   constructor(config: WidgetConfig & { container: string }) {
     try {
@@ -57,17 +58,21 @@ class BookingWidgetInitializer {
         throw new Error(`Container ${config.container} not found`);
       }
 
-      // Check if we already have a root for this container
-      let root = BookingWidgetInitializer.instances.get(config.container);
+      // If we already have a root instance but for a different container,
+      // clean up the old one first
+      if (BookingWidgetInitializer.rootInstance && 
+          BookingWidgetInitializer.containerElement !== container) {
+        BookingWidgetInitializer.cleanup();
+      }
 
-      if (!root) {
-        // Create new root only if one doesn't exist
-        root = createRoot(container);
-        BookingWidgetInitializer.instances.set(config.container, root);
+      // Create new root only if we don't have one or if it was for a different container
+      if (!BookingWidgetInitializer.rootInstance) {
+        BookingWidgetInitializer.rootInstance = createRoot(container);
+        BookingWidgetInitializer.containerElement = container;
       }
 
       // Render or update the widget
-      root.render(
+      BookingWidgetInitializer.rootInstance.render(
         <React.StrictMode>
           <Widget config={config} />
         </React.StrictMode>
@@ -78,12 +83,11 @@ class BookingWidgetInitializer {
     }
   }
 
-  // Clean up method to remove root instance
-  static cleanup(container: string) {
-    const root = BookingWidgetInitializer.instances.get(container);
-    if (root) {
-      root.unmount();
-      BookingWidgetInitializer.instances.delete(container);
+  static cleanup() {
+    if (BookingWidgetInitializer.rootInstance) {
+      BookingWidgetInitializer.rootInstance.unmount();
+      BookingWidgetInitializer.rootInstance = null;
+      BookingWidgetInitializer.containerElement = null;
     }
   }
 }

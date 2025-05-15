@@ -1,26 +1,18 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App';
+import BookingWidget from './widget';
 import './index.css';
 
-const container = document.getElementById('booking-widget');
+// Clean up any existing widget instance before creating a new one
+BookingWidget.cleanup();
 
-if (container) {
-  try {
-    const root = createRoot(container);
-    root.render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
-  } catch (error) {
-    console.error('Failed to initialize app:', error);
-    container.innerHTML = `
-      <div class="p-4 text-red-600">
-        Error: Failed to initialize the application. Please try refreshing the page.
-      </div>
-    `;
+// Initialize the widget
+new BookingWidget({
+  apiKey: 'f3c11240636974be5ed37deecca46bf8',
+  apiUrl: 'https://bookings.wildkemijoki.cz/api/v1',
+  listID: '68013ac9e1c23efb44d861e0',
+  container: '#booking-widget',
+  theme: {
+    primary: '#4F46E5',
+    secondary: '#818CF8'
   }
-} else {
-  console.error('Container element not found');
-}
+});
