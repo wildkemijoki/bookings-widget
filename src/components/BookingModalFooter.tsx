@@ -47,7 +47,11 @@ export function BookingModalFooter({
         }
 
         // Validate phone number
-        const digits = phone.replace(/\D/g, '');
+        let localNumber = phone;
+        if (dialCode && phone.startsWith(dialCode)) {
+          localNumber = phone.slice(dialCode.length);
+        }
+        const digits = localNumber.replace(/\D/g, '');
         if (digits.length < 8 || digits.length > 11) {
           return false;
         }
