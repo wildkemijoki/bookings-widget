@@ -160,6 +160,18 @@ export function Calendar({
     fetchAvailableSlots(true);
   }, [participants]);
 
+  // If no slots are available and we're not loading, show message
+  if (!loading && availableSlots.length === 0) {
+    return (
+      <div className="p-8 text-center">
+        <div className="bg-gray-50 rounded-lg p-8">
+          <p className="text-gray-600 text-lg">No available slots for the selected participants.</p>
+          <p className="text-gray-500 mt-2">Please try adjusting the number of participants or check back later.</p>
+        </div>
+      </div>
+    );
+  }
+
   const handleMonthChange = (direction: 'prev' | 'next') => {
     setCurrentMonth(prev => {
       const newDate = new Date(prev);
