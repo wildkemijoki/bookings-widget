@@ -307,8 +307,7 @@ export function useBookingState() {
       ...prev,
       contactDetails: {
         ...prev.contactDetails,
-        [field]: value,
-        errors: errors
+        [field]: value
       }
     }));
   };
