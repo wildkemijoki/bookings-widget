@@ -175,6 +175,97 @@ export function Calendar({
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  const renderCalendar = () => {
+    const daysInMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + 1,
+      0
+    ).getDate();
+
+    const firstDayOfMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      1
+    ).getDay();
+
+    // Adjust for Monday as first day of week (Sunday is 0 in JS)
+    const startDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+    const days = [];
+    
+    // Add empty cells for days before the first of the month
+    for (let i = 0; i < startDay; i++) {
+      days.push(
+        <div key={`empty-${i}`} className="h-24 bg-gray-50" />
+      );
+    }
+
+    // Add cells for each day of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+      const isSelected = selectedDate?.toDateString() === date.toDateString();
+      const isToday = new Date().toDateString() === date.toDateString();
+
+      // Find slots for this day
+      const daySlots = availableSlots.filter(slot => {
+        const slotDate = new Date(slot.timeSlot.start);
+        return slotDate.getDate() === day &&
+               slotDate.getMonth() === currentMonth.getMonth() &&
+               slotDate.getFullYear() === currentMonth.getFullYear();
+      });
+
+      // Calculate availability percentage
+      let availabilityClass = 'bg-gray-50';
+      if (daySlots.length > 0) {
+        const totalSpots = daySlots.reduce((sum, slot) => 
+          sum + (slot.timeSlot.maxParticipants - slot.timeSlot.bookedPlaces), 0
+        );
+        const maxSpots = daySlots.reduce((sum, slot) => sum + slot.timeSlot.maxParticipants, 0);
+        const availability = totalSpots / maxSpots;
+
+        if (availability > 0.66) {
+          availabilityClass = 'bg-green-50 hover:bg-green-100';
+        } else if (availability > 0.33) {
+          availabilityClass = 'bg-yellow-50 hover:bg-yellow-100';
+        } else {
+          availabilityClass = 'bg-red-50 hover:bg-red-100';
+        }
+      }
+
+      days.push(
+        <div
+          key={day}
+          onClick={() => daySlots.length > 0 && onSelectDate(date)}
+          className={`h-24 p-2 transition-colors cursor-pointer ${
+            isSelected
+              ? 'ring-2 ring-indigo-600 bg-indigo-50'
+              : daySlots.length > 0
+              ? availabilityClass
+              : 'bg-gray-50 cursor-not-allowed'
+          }`}
+        >
+          <div className={`text-sm font-medium ${
+            isToday ? 'text-indigo-600' : 'text-gray-900'
+          }`}>
+            {day}
+          </div>
+          {daySlots.length > 0 && (
+            <div className="mt-1">
+              <div className="text-xs text-gray-600">
+                {daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available
+              </div>
+              <div className="text-xs font-medium text-indigo-600">
+                From {formatPrice(Math.min(...daySlots.map(s => s.price)), experience.currency)}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return days;
+  };
+
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
