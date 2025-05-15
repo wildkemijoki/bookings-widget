@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-family: sans-serif;
+}
+.icon {
+  width: 32px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+/* Default unfilled */
+.bar {
+  fill: white;
+  stroke: black;
+  stroke-width: 1;
+}
+
+/* Filled bar */
+.filled {
+  fill: black;
+  stroke: none;
+}
+
+/* Skill levels */
+.beginner .bar:nth-child(-n+1),
+.intermediate .bar:nth-child(-n+2),
+.advanced .bar:nth-child(-n+3),
+.master .bar {
+  fill: black;
+  stroke: none;
+}
