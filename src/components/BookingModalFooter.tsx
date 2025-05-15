@@ -35,9 +35,22 @@ export function BookingModalFooter({
       case 'contact': {
         const { firstName, lastName, email, phone, nationality } = bookingState.contactDetails;
         
-        if (bookingState.contactDetails.errors && Object.keys(bookingState.contactDetails.errors).length > 0) {
-           return false;
-         }
+        // Check if all required fields are present
+        if (!firstName || !lastName || !email || !phone || !nationality) {
+          return false;
+        }
+
+        // Validate email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return false;
+        }
+
+        // Validate phone number
+        const digits = phone.replace(/\D/g, '');
+        if (digits.length < 8 || digits.length > 11) {
+          return false;
+        }
 
         return true;
       }

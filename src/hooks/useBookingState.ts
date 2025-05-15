@@ -1,5 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import type { Experience, BookingState, ParticipantCategory, TimeSlot } from '../types';
+import { WidgetConfigContext } from '../context/WidgetContext';
+
+export interface BookingActions {
+  handleExperienceSelect: (experience: Experience) => void;
+  handleExperienceBook: () => void;
+  handleUpdateParticipants: (categoryId: string, change: number) => void;
+  handleSelectDate: (date: Date) => void;
+  handleSelectTime: (time: string, timeSlot: TimeSlot, price: number) => void;
+  handleSelectPickup: (locationId: string | null) => void;
+  handleToggleExtra: (extraId: string, quantity?: number) => void;
+  handleUpdateContact: (field: keyof BookingState['contactDetails'], value: string | boolean) => void;
+  handleUpdateQuestionAnswer: (questionId: string, answer: string | boolean, participantId?: string) => void;
+  handleContinue: (nextStep: string) => void;
+  handleBack: () => void;
+  handleClose: () => void;
+  handleConfirm: () => Promise<void>;
+  getParticipantCategories: (experience: Experience | null) => ParticipantCategory[];
+  handleUpdateBookingState: (updates: Partial<BookingState>) => void;
+}
+
+const STORAGE_KEY = 'booking_widget_state';
 
 const initialBookingState: BookingState = {
   experience: null,
@@ -21,37 +42,73 @@ const initialBookingState: BookingState = {
     email: '',
     phone: '',
     nationality: '',
-    newsletter: false,
-    errors: {}
+    newsletter: false
   },
   bookingQuestions: {},
   total: 0,
   tax: 0,
   agreedToCancellationPolicy: false,
-  source: 'widget'
+  source: 'widget',
+  discountCode: undefined,
+  discount: undefined
 };
-
-export interface BookingActions {
-  handleExperienceSelect: (experience: Experience) => void;
-  handleExperienceBook: () => void;
-  handleUpdateParticipants: (categoryId: string, change: number) => void;
-  handleSelectDate: (date: Date) => void;
-  handleSelectTime: (time: string, timeSlot: TimeSlot, price: number) => void;
-  handleSelectPickup: (locationId: string | null) => void;
-  handleToggleExtra: (extraId: string, quantity?: number) => void;
-  handleUpdateContact: (field: keyof BookingState['contactDetails'], value: string | boolean, errors?: Record<string, string>) => void;
-  handleUpdateQuestionAnswer: (questionId: string, answer: string | boolean, participantId?: string) => void;
-  handleContinue: (nextStep: string) => void;
-  handleBack: () => void;
-  handleClose: () => void;
-  handleConfirm: () => Promise<void>;
-  getParticipantCategories: (experience: Experience | null) => ParticipantCategory[];
-}
 
 export function useBookingState() {
   const [bookingState, setBookingState] = useState<BookingState>(initialBookingState);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [currentStep, setCurrentStep] = useState<string>('details');
+  const config = useContext(WidgetConfigContext);
+
+  const hasRequiredQuestions = () => {
+    if (!selectedExperience?.bookingQuestions) return false;
+
+    const requiredQuestions = selectedExperience.bookingQuestions.filter(q => 
+      q.required && q.requiredStage === 'beforeCheckout'
+    );
+
+    if (!requiredQuestions.length) return false;
+
+    return requiredQuestions.some(question => {
+      let applies = false;
+
+      switch (question.type) {
+        case 'booking':
+          applies = true;
+          break;
+        case 'category':
+          if (!question.applicableCategories?.length) break;
+          applies = Object.entries(bookingState.participants).some(([categoryId, count]) => 
+            count > 0 && question.applicableCategories.includes(categoryId)
+          );
+          break;
+        case 'extra':
+          if (!question.applicableExtras?.length) break;
+          applies = bookingState.extras?.some(extraId => 
+            question.applicableExtras?.includes(extraId)
+          );
+          break;
+      }
+
+      if (!applies) return false;
+
+      if (question.perPerson) {
+        return Object.entries(bookingState.participants).some(([categoryId, count]) => {
+          if (count === 0) return false;
+          if (question.type === 'category' && !question.applicableCategories?.includes(categoryId)) return false;
+
+          for (let i = 0; i < count; i++) {
+            const participantId = `${categoryId}-${i}`;
+            const answer = bookingState.bookingQuestions[`${question._id}-${participantId}`]?.answer;
+            if (!answer && answer !== false) return true;
+          }
+          return false;
+        });
+      } else {
+        const answer = bookingState.bookingQuestions[question._id]?.answer;
+        return !answer && answer !== false;
+      }
+    });
+  };
 
   const handleExperienceSelect = (experience: Experience) => {
     setSelectedExperience(experience);
@@ -66,6 +123,7 @@ export function useBookingState() {
 
   const handleExperienceBook = () => {
     setCurrentStep('participants');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleUpdateParticipants = (categoryId: string, change: number) => {
@@ -78,6 +136,7 @@ export function useBookingState() {
         [categoryId]: newCount
       };
 
+      // Recalculate total
       const total = calculateTotal(
         prev.experience,
         newParticipants,
@@ -175,10 +234,11 @@ export function useBookingState() {
 
   const handleToggleExtra = (extraId: string, quantity?: number) => {
     setBookingState(prev => {
+      // If quantity is provided, just update the quantity
       if (quantity !== undefined) {
         const newExtras = quantity > 0 
-          ? [...new Set([...prev.extras, extraId])]
-          : prev.extras.filter(id => id !== extraId);
+          ? [...new Set([...prev.extras, extraId])]  // Add if not present
+          : prev.extras.filter(id => id !== extraId); // Remove if quantity is 0
 
         const newExtraQuantities = {
           ...prev.extraQuantities,
@@ -207,6 +267,7 @@ export function useBookingState() {
         };
       }
 
+      // For non-per-person extras, just toggle
       const newExtras = prev.extras.includes(extraId)
         ? prev.extras.filter(id => id !== extraId)
         : [...prev.extras, extraId];
@@ -241,17 +302,12 @@ export function useBookingState() {
     });
   };
 
-  const handleUpdateContact = (
-    field: keyof BookingState['contactDetails'], 
-    value: string | boolean,
-    errors?: Record<string, string>
-  ) => {
+  const handleUpdateContact = (field: keyof BookingState['contactDetails'], value: string | boolean) => {
     setBookingState(prev => ({
       ...prev,
       contactDetails: {
         ...prev.contactDetails,
-        [field]: value,
-        errors: errors || prev.contactDetails.errors
+        [field]: value
       }
     }));
   };
@@ -270,7 +326,17 @@ export function useBookingState() {
   };
 
   const handleContinue = (nextStep: string) => {
-    setCurrentStep(nextStep);
+    // Check if we need to show questions before review
+    if (nextStep === 'review' && hasRequiredQuestions()) {
+      setCurrentStep('questions');
+    } else if (nextStep === 'review' && currentStep === 'options') {
+      // If coming from options and there are no required questions, go to review
+      setCurrentStep('review');
+    } else {
+      setCurrentStep(nextStep);
+    }
+    // Scroll to top when changing steps
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBack = () => {
@@ -278,6 +344,7 @@ export function useBookingState() {
     const currentIndex = steps.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(steps[currentIndex - 1]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -293,8 +360,10 @@ export function useBookingState() {
     }
 
     try {
+      // Get the frontend URL from the current window location
       const frontendUrl = window.location.href.split('?')[0].split('#')[0];
 
+      // Prepare the request payload
       const payload = {
         experienceId: bookingState.experience.id,
         timeSlotId: bookingState.selectedTimeSlot._id,
@@ -322,6 +391,7 @@ export function useBookingState() {
         },
         bookingQuestions: Object.entries(bookingState.bookingQuestions)
           .reduce((acc, [key, value]) => {
+            // Only include non-participant specific questions
             if (!key.includes('-')) {
               acc[key] = { answer: value.answer };
             }
@@ -329,14 +399,16 @@ export function useBookingState() {
           }, {} as Record<string, { answer: string | boolean }>),
         agreedToCancellationPolicy: bookingState.agreedToCancellationPolicy,
         source: 'widget',
-        frontendUrl
+        frontendUrl,
+        discountCode: bookingState.discountCode
       };
 
-      const response = await fetch('https://bookings.wildkemijoki.cz/api/v1/widget/book', {
+      // Make the API request
+      const response = await fetch(`${config.apiUrl}/widget/book`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': 'f3c11240636974be5ed37deecca46bf8'
+          'x-api-key': config.apiKey
         },
         body: JSON.stringify(payload)
       });
@@ -348,6 +420,7 @@ export function useBookingState() {
 
       const result = await response.json();
       
+      // Redirect to payment URL if available
       if (result.sessionUrl) {
         window.location.href = result.sessionUrl;
       } else {
@@ -364,6 +437,7 @@ export function useBookingState() {
   const getParticipantCategories = (experience: Experience | null): ParticipantCategory[] => {
     if (!experience) return [];
 
+    // Get categories from experience
     const categories = experience.usedPricingCategories.map(({ category }) => ({
       id: category._id,
       name: category.name,
@@ -371,9 +445,10 @@ export function useBookingState() {
       places: category.places,
       isDefault: category.isDefault,
       required: category.required,
-      price: 0
+      price: 0 // Default price, will be updated from timeSlot if available
     }));
 
+    // If we have a selected time slot, update prices from its pricing categories
     if (bookingState.selectedTimeSlot?.pricingCategories) {
       bookingState.selectedTimeSlot.pricingCategories.forEach(({ categoryId, price }) => {
         const category = categories.find(c => c.id === categoryId);
@@ -398,6 +473,7 @@ export function useBookingState() {
     
     if (!experience || !timeSlot) return total;
 
+    // Calculate participants total using timeSlot's pricing categories
     total = Object.entries(participants).reduce((sum, [categoryId, count]) => {
       const categoryPricing = timeSlot.pricingCategories.find(
         pc => pc.categoryId === categoryId
@@ -405,6 +481,7 @@ export function useBookingState() {
       return sum + ((categoryPricing?.price || 0) * count);
     }, 0);
 
+    // Add pickup cost if selected
     if (pickupLocation) {
       const totalParticipants = Object.values(participants).reduce((sum, count) => sum + count, 0);
       const pickupPrice = timeSlot.transportPerPerson
@@ -413,6 +490,7 @@ export function useBookingState() {
       total += pickupPrice;
     }
 
+    // Add extras cost
     extras.forEach(extraId => {
       const extra = timeSlot.extras?.find(e => e._id === extraId);
       if (extra) {
@@ -422,6 +500,13 @@ export function useBookingState() {
     });
 
     return total;
+  };
+
+  const handleUpdateBookingState = (updates: Partial<BookingState>) => {
+    setBookingState(prev => ({
+      ...prev,
+      ...updates
+    }));
   };
 
   return {
@@ -442,7 +527,8 @@ export function useBookingState() {
       handleBack,
       handleClose,
       handleConfirm,
-      getParticipantCategories
+      getParticipantCategories,
+      handleUpdateBookingState
     }
   };
 }

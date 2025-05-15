@@ -106,7 +106,6 @@ export interface BookingState {
     phone: string;
     nationality: string;
     newsletter: boolean;
-+    errors?: Record<string, string>;
   };
   bookingQuestions: Record<string, {
     answer: string | boolean;
