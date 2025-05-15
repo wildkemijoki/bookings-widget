@@ -75,7 +75,10 @@ const validatePhone = (phone: string, dialCode: string = '') => {
   const handleEmailChange = (email: string) => {
     const error = validateEmail(email);
     setErrors(prev => ({ ...prev, email: error }));
-    onUpdateContact('email', email);
+    onUpdateContact('email', email, {
+      ...errors,
+      email: error
+    });
   };
 
   const handlePhoneChange = (value: string) => {
@@ -93,7 +96,10 @@ const validatePhone = (phone: string, dialCode: string = '') => {
     const error = validatePhone(sanitizedValue);
     setErrors(prev => ({ ...prev, phone: error }));
     
-    onUpdateContact('phone', fullPhone);
+    onUpdateContact('phone', fullPhone, {
+      ...errors,
+      phone: error
+    });
   };
 
   const handleCountrySelect = (countryCode: string) => {
