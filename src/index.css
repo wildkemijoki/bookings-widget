@@ -33,5 +33,4 @@
 .advanced .bar:nth-child(-n+3),
 .master .bar {
   fill: black;
-  stroke: none;
 }
