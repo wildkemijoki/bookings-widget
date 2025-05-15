@@ -1,5 +1,6 @@
 #bash
-
+git pull
+npm install
 npm run build
 cd dist
 rm -rf booking-widget.es*
