@@ -255,6 +255,7 @@ export function Calendar({
                 {daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available
               </div>
               <div className="text-xs font-medium text-indigo-600">
+                {console.log(daySlots)}
                 From {formatPrice(Math.min(...daySlots.map(s => s.price)), experience.currency)}
               </div>
             </div>
