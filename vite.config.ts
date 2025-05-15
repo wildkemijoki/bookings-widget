@@ -3,15 +3,17 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    'process.env': {} // Fix "process is not defined" for UMD build
+  },
   build: {
     lib: {
       entry: 'src/widget.tsx',
-      name: 'BookingWidget',
+      name: 'BookingWidget', // important for UMD global var
       fileName: (format) => `booking-widget.${format}.js`,
       formats: ['es', 'umd']
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@headlessui/react'],
       output: {
         globals: {
           react: 'React',
