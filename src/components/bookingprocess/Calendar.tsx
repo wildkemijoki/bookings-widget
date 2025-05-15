@@ -160,18 +160,6 @@ export function Calendar({
     fetchAvailableSlots(true);
   }, [participants]);
 
-  // If no slots are available and we're not loading, show message
-  if (!loading && availableSlots.length === 0) {
-    return (
-      <div className="p-8 text-center">
-        <div className="bg-gray-50 rounded-lg p-8">
-          <p className="text-gray-600 text-lg">No available slots for the selected participants.</p>
-          <p className="text-gray-500 mt-2">Please try adjusting the number of participants or check back later.</p>
-        </div>
-      </div>
-    );
-  }
-
   const handleMonthChange = (direction: 'prev' | 'next') => {
     setCurrentMonth(prev => {
       const newDate = new Date(prev);
@@ -180,94 +168,6 @@ export function Calendar({
     });
     // Force fetch for new month
     setTimeout(() => fetchAvailableSlots(true), 0);
-  };
-
-  const getLowestPriceForDate = (date: Date): { price: number; currency: string } | null => {
-    const slotsForDate = availableSlots.filter(({ timeSlot }) => {
-      const slotDate = new Date(timeSlot.start);
-      return slotDate.toDateString() === date.toDateString();
-    });
-
-    if (slotsForDate.length === 0) return null;
-
-    const prices = slotsForDate.map(slot => {
-      let total = 0;
-      Object.entries(participants).forEach(([categoryId, count]) => {
-        const price = slot.timeSlot.pricingCategories.find(pc => pc.categoryId === categoryId)?.price || 0;
-        total += price * count;
-      });
-      return {
-        price: total || slot.timeSlot.price,
-        currency: slot.timeSlot.currency || experience.currency || 'EUR'
-      };
-    });
-
-    return prices.reduce((min, curr) => (curr.price < min.price ? curr : min));
-  };
-
-  const getCapacityForDate = (date: Date) => {
-    const slots = availableSlots.filter(({ timeSlot }) => {
-      const slotDate = new Date(timeSlot.start);
-      return slotDate.toDateString() === date.toDateString();
-    });
-
-    if (!slots.length) return null;
-
-    return slots.reduce((sum, { timeSlot }) => {
-      const cap = ((timeSlot.maxParticipants - timeSlot.bookedPlaces) / timeSlot.maxParticipants) * 100;
-      return sum + cap;
-    }, 0) / slots.length;
-  };
-
-  const getCapacityClass = (cap: number | null) => {
-    if (cap === null) return '';
-    if (cap <= 33) return 'bg-red-50 hover:bg-red-100';
-    if (cap <= 66) return 'bg-yellow-50 hover:bg-yellow-100';
-    return 'bg-green-50 hover:bg-green-100';
-  };
-
-  const renderCalendar = () => {
-    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
-    const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-    const startOffset = (firstDay + 6) % 7;
-
-    const days = [];
-    for (let i = 0; i < startOffset; i++) {
-      days.push(<div key={`blank-${i}`} />);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const selected = selectedDate?.toDateString() === date.toDateString();
-      const available = availableSlots.some(({ timeSlot }) => 
-        new Date(timeSlot.start).toDateString() === date.toDateString()
-      );
-      const lowest = getLowestPriceForDate(date);
-      const cap = getCapacityForDate(date);
-      const capClass = getCapacityClass(cap);
-      const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
-
-      days.push(
-        <button
-          key={day}
-          onClick={() => !isPast && available && onSelectDate(date)}
-          disabled={isPast || !available}
-          className={`h-16 p-1 rounded-lg text-sm relative transition-all
-            ${isPast ? 'opacity-50' : 'cursor-pointer'}
-            ${selected ? 'ring-2 ring-indigo-600 ring-offset-2' : ''}
-            ${available ? capClass : 'bg-gray-50 text-gray-400'}`}
-        >
-          <div>{day}</div>
-          {lowest && !isPast && (
-            <div className="text-xs text-indigo-600 font-medium">
-              from {formatPrice(lowest.price, lowest.currency)}
-            </div>
-          )}
-        </button>
-      );
-    }
-
-    return days;
   };
 
   const monthNames = [
@@ -327,6 +227,8 @@ export function Calendar({
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Week days header */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
           <div key={day} className="text-sm font-medium text-gray-500 flex justify-center">
@@ -334,15 +236,24 @@ export function Calendar({
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
-        {loading ? (
-          <div className="col-span-7 flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-600 border-t-transparent" />
-          </div>
-        ) : (
-          renderCalendar()
-        )}
-      </div>
+
+      {/* Show message when no slots are available */}
+      {!loading && availableSlots.length === 0 ? (
+        <div className="bg-gray-50 rounded-lg p-8 text-center">
+          <p className="text-gray-600 text-lg">No available slots for the selected participants.</p>
+          <p className="text-gray-500 mt-2">Please try adjusting the number of participants or check back later.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-7 gap-1">
+          {loading ? (
+            <div className="col-span-7 flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-600 border-t-transparent" />
+            </div>
+          ) : (
+            renderCalendar()
+          )}
+        </div>
+      )}
     </div>
   );
 }
