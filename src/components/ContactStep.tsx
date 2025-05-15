@@ -51,9 +51,16 @@ export function ContactStep({
     return '';
   };
 
-  const validatePhone = (phone: string) => {
+  const validatePhone = (phone: string, dialCode: string = '') => {
+    // Remove the country code if present
+    let localNumber = phone;
+    if (dialCode && phone.startsWith(dialCode)) {
+      localNumber = phone.slice(dialCode.length);
+    }
+    
     // Remove all non-digit characters for validation
-    const digits = phone.replace(/\D/g, '');
+    const digits = localNumber.replace(/\D/g, '');
+    
     if (!digits) {
       return 'Phone number is required';
     }
@@ -79,7 +86,7 @@ export function ContactStep({
     const dialCode = selectedCountry?.dial_code || '';
     
     // Validate only the local part (without country code)
-    const error = validatePhone(sanitizedValue);
+    const error = validatePhone(sanitizedValue, dialCode);
     setErrors(prev => ({ ...prev, phone: error }));
     
     // Combine dial code with phone number for the booking state
