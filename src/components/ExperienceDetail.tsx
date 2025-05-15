@@ -218,12 +218,12 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
               <div className="bg-gray-100 px-3 py-1.5 rounded-lg flex items-center justify-center">
                 <span className="text-gray-500">difficulty:&nbsp;</span>
                 <span className="ml-1 font-bold">{experience.difficulty}</span>
-                <div class="ml-5 {experience.difficulty}">
-                  <svg class="icon" viewBox="0 0 32 24">
-                    <rect class="bar" x="2"  y="14" width="4" height="8"/>
-                    <rect class="bar" x="8"  y="10" width="4" height="12"/>
-                    <rect class="bar" x="14" y="6"  width="4" height="16"/>
-                    <rect class="bar" x="20" y="2"  width="4" height="20"/>
+                <div className="ml-5 {experience.difficulty}">
+                  <svg className="icon" viewBox="0 0 32 24">
+                    <rect className="bar" x="2"  y="14" width="4" height="8"/>
+                    <rect className="bar" x="8"  y="10" width="4" height="12"/>
+                    <rect className="bar" x="14" y="6"  width="4" height="16"/>
+                    <rect className="bar" x="20" y="2"  width="4" height="20"/>
                   </svg>
                   
                 </div>
