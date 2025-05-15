@@ -252,7 +252,7 @@ export function Calendar({
           {daySlots.length > 0 && (
             <div className="mt-1">
               <div className="text-xs text-gray-600">
-                {daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available
+                <span className="">{daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available</span>
               </div>
               <div className="text-xs font-medium text-indigo-600">
                 {console.log(daySlots)}
