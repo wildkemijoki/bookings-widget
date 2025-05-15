@@ -54,13 +54,15 @@ export function ContactStep({
 const validatePhone = (phone: string, dialCode: string = '') => {
   // Remove the country code if present
   let localNumber = phone;
+  console.log('Phone:', phone);
   if (dialCode && phone.startsWith(dialCode)) {
     localNumber = phone.slice(dialCode.length);
   }
+  console.log('Stripped:', localNumber)
   
   // Remove all non-digit characters for validation
   const digits = localNumber.replace(/\D/g, '');
-  
+  console.log('Digits:', digits);
   if (!digits) {
     return 'Phone number is required';
   }
