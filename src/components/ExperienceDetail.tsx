@@ -143,14 +143,14 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
               <div className="flex">
                 {media.map((url, index) => (
                   <div key={index} className="relative flex-[0_0_100%] min-w-0">
-                    <div className="relative w-full h-[400px]">
+                    <div className="relative w-full h-[400px] flex items-center justify-center bg-gray-100">
                       {isVideo(url) ? (
                         renderVideo(url)
                       ) : (
                         <img 
                           src={url}
                           alt={`${experience.name} - View ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover object-center"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://placeholder.co/800x400?text=No+Image';
                           }}
