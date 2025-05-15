@@ -219,11 +219,11 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                 <span className="text-gray-500">difficulty:&nbsp;</span>
                 <span className="ml-1 font-bold">{experience.difficulty}</span>
                 <div className={`ml-5 ${experience.difficulty.toLowerCase()}`}>
-                  <svg className="icon" viewBox="0 0 32 24">
-                    <rect className="bar" x="2"  y="14" width="4" height="8"/>
-                    <rect className="bar" x="8"  y="10" width="4" height="12"/>
-                    <rect className="bar" x="14" y="6"  width="4" height="16"/>
-                    <rect className="bar" x="20" y="2"  width="4" height="20"/>
+                  <svg className="icon" viewBox="0 0 56 24">
+                    <rect className="bar" x="2"  y="14" width="6" height="8"/>
+                    <rect className="bar" x="14" y="10" width="6" height="12"/>
+                    <rect className="bar" x="26" y="6"  width="6" height="16"/>
+                    <rect className="bar" x="38" y="2"  width="6" height="20"/>
                   </svg>
                 </div>
               </div>
