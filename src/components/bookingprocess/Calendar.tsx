@@ -191,34 +191,41 @@ export function Calendar({
     // Adjust for Monday as first day of week (Sunday is 0 in JS)
     const startDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
+    const lastDayOfMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + 1,
+      0
+    ).getDay();
+
     const days = [];
 
-    // Get last day of previous month
-    const lastMonthLastDay = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      0
-    ).getDate();
+    // Only add previous month days if first day isn't Monday
+    if (startDay > 0) {
+      const lastMonthLastDay = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        0
+      ).getDate();
 
-    // Add cells for days from previous month
-    for (let i = 0; i < startDay; i++) {
-      const day = lastMonthLastDay - startDay + i + 1;
-      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, day);
-      days.push(
-        <div 
-          key={`prev-${i}`} 
-          className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
-        >
-          <div className="px-2 py-1 bg-white border-b border-gray-100">
-            <span className="text-sm font-medium text-gray-400">
-              {`${day}.${currentMonth.getMonth() || 12}.`}
-            </span>
+      for (let i = 0; i < startDay; i++) {
+        const day = lastMonthLastDay - startDay + i + 1;
+        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, day);
+        days.push(
+          <div 
+            key={`prev-${i}`} 
+            className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
+          >
+            <div className="px-2 py-1 bg-white border-b border-gray-100">
+              <span className="text-sm font-medium text-gray-400">
+                {`${day}.${currentMonth.getMonth() || 12}.`}
+              </span>
+            </div>
           </div>
-        </div>
-      );
+        );
+      }
     }
 
-    // Add cells for each day of the month
+    // Add current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       const isSelected = selectedDate?.toDateString() === date.toDateString();
@@ -282,24 +289,23 @@ export function Calendar({
       );
     }
 
-    // Calculate remaining cells needed
-    const totalCells = 42; // 6 rows × 7 days
-    const remainingCells = totalCells - (days.length);
-
-    // Add cells for days from next month
-    for (let i = 1; i <= remainingCells; i++) {
-      days.push(
-        <div 
-          key={`next-${i}`} 
-          className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
-        >
-          <div className="px-2 py-1 bg-white border-b border-gray-100">
-            <span className="text-sm font-medium text-gray-400">
-              {`${i}.${(currentMonth.getMonth() + 2) % 12 || 12}.`}
-            </span>
+    // Only add next month days if last day isn't Sunday
+    if (lastDayOfMonth !== 0) {
+      const remainingDays = 7 - lastDayOfMonth;
+      for (let i = 1; i <= remainingDays; i++) {
+        days.push(
+          <div 
+            key={`next-${i}`} 
+            className="h-24 rounded-lg bg-gray-50 border border-gray-100 opacity-50"
+          >
+            <div className="px-2 py-1 bg-white border-b border-gray-100">
+              <span className="text-sm font-medium text-gray-400">
+                {`${i}.${(currentMonth.getMonth() + 2) % 12 || 12}.`}
+              </span>
+            </div>
           </div>
-        </div>
-      );
+        );
+      }
     }
 
     return days;
