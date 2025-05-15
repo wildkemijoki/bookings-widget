@@ -51,17 +51,24 @@ export function ContactStep({
     return '';
   };
 
-  const validatePhone = (phone: string) => {
-    // Remove all non-digit characters for validation
-    const digits = phone.replace(/\D/g, '');
-    if (!digits) {
-      return 'Phone number is required';
-    }
-    if (digits.length < 8 || digits.length > 11) {
-      return 'Phone number must be between 8 and 11 digits';
-    }
-    return '';
-  };
+const validatePhone = (phone: string, dialCode: string = '') => {
+  // Remove the country code if present
+  let localNumber = phone;
+  if (dialCode && phone.startsWith(dialCode)) {
+    localNumber = phone.slice(dialCode.length);
+  }
+  
+  // Remove all non-digit characters for validation
+  const digits = localNumber.replace(/\D/g, '');
+  
+  if (!digits) {
+    return 'Phone number is required';
+  }
+  if (digits.length < 8 || digits.length > 11) {
+    return 'Phone number must be between 8 and 11 digits (excluding country code)';
+  }
+  return '';
+};
 
   const handleEmailChange = (email: string) => {
     const error = validateEmail(email);
