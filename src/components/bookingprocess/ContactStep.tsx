@@ -90,7 +90,7 @@ const validatePhone = (phone: string, dialCode: string = '') => {
     // Combine dial code with phone number for the booking state
     const fullPhone = dialCode ? `${dialCode} ${sanitizedValue}` : sanitizedValue;
     
-    const error = validatePhone(sanitizedValue);
+    const error = validatePhone(sanitizedValue, dialCode);
     setErrors(prev => ({ ...prev, phone: error }));
     
     onUpdateContact('phone', fullPhone);
