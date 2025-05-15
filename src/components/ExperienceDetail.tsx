@@ -202,9 +202,12 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
             <h2 className="text-3xl font-bold text-gray-900 mb-4">{experience.name}</h2>
             <div className="bg-gray-50 p-6 rounded-lg mb-6 relative">
               <span className="absolute text-gray-200 text-6xl font-serif top-0 left-4">"</span>
-              <p className="text-xl text-gray-600 relative z-10 pl-8">
-                {experience.shortDescription || experience.description.substring(0, 150) + '...'}
-              </p>
+              <div 
+                className="text-xl text-gray-600 relative z-10 pl-8"
+                dangerouslySetInnerHTML={{ 
+                  __html: experience.shortDescription || experience.description.substring(0, 150) + '...'
+                }}
+              />
               <span className="absolute text-gray-200 text-6xl font-serif bottom-0 right-4">"</span>
             </div>
             <div className="grid grid-cols-3 gap-6 mb-6">
@@ -233,9 +236,10 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
               {/* Left column */}
               <div>
-                <div className="prose max-w-none">
-                  <p className="text-gray-600">{experience.description}</p>
-                </div>
+                <div 
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: experience.description }}
+                />
 
                 <div className="mt-8 space-y-2">
                   <CollapsiblePanel title="Please note" defaultOpen>
