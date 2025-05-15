@@ -45,7 +45,7 @@ export function calculatePickupAndReturnTime(
   latestPickupDate.setMinutes(latestPickupDate.getMinutes() - (pickupOffset - pickupWindow));
   
   const returnDate = new Date(activityDate);
-  returnDate.setMinutes(returnDate.getMinutes() + duration);
+  returnDate.setMinutes(returnDate.getMinutes() + (duration + pickupOffset));
 
   // Format times in the specified timezone
   const formatter = new Intl.DateTimeFormat('en-US', {
