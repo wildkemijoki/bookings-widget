@@ -236,7 +236,7 @@ export function Calendar({
         <div
           key={day}
           onClick={() => daySlots.length > 0 && onSelectDate(date)}
-          className={`h-24 p-2 transition-colors cursor-pointer ${
+          className={`h-24 p-2 transition-colors cursor-pointer flex flex-col ${
             isSelected
               ? 'ring-2 ring-indigo-600 bg-indigo-50'
               : daySlots.length > 0
@@ -250,12 +250,11 @@ export function Calendar({
             {day}
           </div>
           {daySlots.length > 0 && (
-            <div className="mt-1">
-              <div className="text-xs text-gray-600">
-                <span className="">{daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available</span>
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="text-xs text-gray-600 text-center">
+                {daySlots.length} time{daySlots.length !== 1 ? 's' : ''} available
               </div>
-              <div className="text-xs font-medium text-indigo-600">
-                {console.log(daySlots)}
+              <div className="text-xs font-medium text-indigo-600 text-center">
                 From {formatPrice(Math.min(...daySlots.map(s => s.timeSlot?.price)), experience.currency)}
               </div>
             </div>
