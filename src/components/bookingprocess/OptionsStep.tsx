@@ -87,7 +87,7 @@ export function OptionsStep({
                 bookingState.time!,
                 parseInt(location.pickupTime),
                 experience.duration,
-                experience.timezone,
+                "Europe/Helsinki",
                 bookingState.date || undefined,
                 location.pickupWindow || 0
               );
