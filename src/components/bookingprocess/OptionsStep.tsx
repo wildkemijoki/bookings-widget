@@ -90,7 +90,7 @@ export function OptionsStep({
               const times = calculatePickupAndReturnTime(
                 bookingState.time!,
                 parseInt(location.pickupTime),
-                experience.duration,
+                parseInt(experience.duration),
                 "Europe/Helsinki",
                 bookingState.date || undefined,
                 location.pickupWindow || 0
