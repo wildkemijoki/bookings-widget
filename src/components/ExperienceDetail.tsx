@@ -433,10 +433,11 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                           style={{ border: 'none', height: '115px' }}
                         />
                         </div>
-                        <div>
+
+                      </div>
+                                              <div>
                           <a href='https://www.kayak.de/Levi.118274.guide' target='_blank'><img height='150' src='https://content.r9cdn.net/rimg/seo/badges/v1/ORANGE_LARGE_FIND_US_KAYAK.png' /></a>	
                         </div>
-                      </div>
                     </div>
                   </div>
                 </div>
