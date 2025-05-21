@@ -249,7 +249,7 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                   dangerouslySetInnerHTML={{ __html: experience.description }}
                 />
 
-                <div className="mt-8 space-y-2">
+                <div className="mt-8">
                   <CollapsiblePanel title="Please note" defaultOpen>
                     <div className="flex flex-col min-h-0 overflow-auto">
                       {experience.knowBeforeYouGo && (
