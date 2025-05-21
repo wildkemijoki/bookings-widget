@@ -255,11 +255,9 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                       <div className="text-gray-600 space-y-2">
                         {experience.knowBeforeYouGo ? (
                           <div
-                            className="text-gray-600 space-y-2"
+                            className="text-gray-600 space-y-2 whitespace-pre-line"
                             dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
                           />
-                        ) : (
-                          <div className="text-gray-600">No specific notes provided.</div>
                         )}
                       </div>
                     </div>
