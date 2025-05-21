@@ -252,13 +252,12 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                 <div className="mt-8 space-y-2">
                   <CollapsiblePanel title="Please note" defaultOpen>
                     <div className="flex flex-col min-h-0 overflow-auto">
-                        {experience.knowBeforeYouGo && {
-                          <div
-                            className="text-gray-600 space-y-2 whitespace-pre-line">
-                            dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
-                            </div>
-                        }}
-                      </div>
+                      {experience.knowBeforeYouGo && (
+                        <div
+                          className="text-gray-600 space-y-2 whitespace-pre-line"
+                          dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
+                        />
+                      )}
                     </div>
                   </CollapsiblePanel>
 
@@ -430,7 +429,6 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                           style={{ border: 'none', height: '115px' }}
                         />
                         </div>
-
                       </div>
                       <div className="flex justify-center">
                         <a href='https://www.kayak.de/Levi.118274.guide' target='_blank'><img style={{height: '115px'}} src='https://content.r9cdn.net/rimg/seo/badges/v1/ORANGE_LARGE_FIND_US_KAYAK.png' /></a>	
