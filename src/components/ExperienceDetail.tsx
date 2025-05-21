@@ -435,9 +435,9 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                         </div>
 
                       </div>
-                                              <div>
-                          <a href='https://www.kayak.de/Levi.118274.guide' target='_blank'><img style={{height: '80px'}} src='https://content.r9cdn.net/rimg/seo/badges/v1/ORANGE_LARGE_FIND_US_KAYAK.png' /></a>	
-                        </div>
+                      <div className="flex justify-center">
+                        <a href='https://www.kayak.de/Levi.118274.guide' target='_blank'><img style={{height: '80px'}} src='https://content.r9cdn.net/rimg/seo/badges/v1/ORANGE_LARGE_FIND_US_KAYAK.png' /></a>	
+                      </div>
                     </div>
                   </div>
                 </div>
