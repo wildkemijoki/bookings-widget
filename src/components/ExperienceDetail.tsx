@@ -254,7 +254,7 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                     <div className="flex flex-col min-h-0 overflow-y-auto">
                       {experience.knowBeforeYouGo && (
                         <div
-                          className="text-gray-600 max-w-full break-words"
+                          className="text-gray-600 max-w-full overflow-y-auto break-words"
                           dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
                         />
                       )}
