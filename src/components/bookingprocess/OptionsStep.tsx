@@ -82,7 +82,7 @@ export function OptionsStep({
             {transportAvailable && timeSlot.pickupPlaces.map(location => {
               const isPerPerson = timeSlot.transportPerPerson;
               const totalPrice = isPerPerson ? location.price * totalParticipants : location.price;
-              console.log("bookingState.time!", bookingState.time!);
+              console.log("bookingState.time!", typeof bookingState.time!);
       console.log("parseInt(location.pickupTime)", parseInt(location.pickupTime));
       console.log("experience.duration", experience.duration);
       console.log("bookingState.date", bookingState.date);
