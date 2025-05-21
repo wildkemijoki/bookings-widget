@@ -250,16 +250,15 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                 />
 
                 <div className="mt-8 overflow-y-auto">
-                  <CollapsiblePanel title="Please note" defaultOpen>
+                  
                     <div className="flex flex-col min-h-0 overflow-y-auto">
                       {experience.knowBeforeYouGo && (
                         <div
-                          className="text-gray-600 prose max-w-none"
+                          className="text-gray-600 prose max-w-none">
                           dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
-                        />
+                        </div>
                       )}
                     </div>
-                  </CollapsiblePanel>
 
                   <CollapsiblePanel title="Itinerary">
                     <div className="space-y-4">
