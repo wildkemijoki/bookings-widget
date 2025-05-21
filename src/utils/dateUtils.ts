@@ -35,20 +35,24 @@ export function calculatePickupAndReturnTime(
   // Create Date objects for activity, pickup, and return times
   const activityDate = new Date(baseDate);
   activityDate.setHours(hours, minutes, 0, 0);
+  console.log("activityDate", activityDate)
   
   // Calculate earliest pickup time (pickup offset + window)
   const earliestPickupDate = new Date(activityDate);
   earliestPickupDate.setMinutes(earliestPickupDate.getMinutes() - pickupOffset);
+  console.log("earliestPickupDate",earliestPickupDate);
 
   // Calculate latest pickup time (pickup offset - window)
   const latestPickupDate = new Date(activityDate);
   latestPickupDate.setMinutes(latestPickupDate.getMinutes() - (pickupOffset - pickupWindow));
+  console.log("latestPickupDate", latestPickupDate)
   
   const returnDate = new Date(activityDate);
   returnDate.setMinutes(returnDate.getMinutes() + (duration + pickupOffset));
+  console.log("returnDate", returnDate)
 
   // Format times in the specified timezone
-  const formatter = new Intl.DateTimeFormat('en-US', {
+  const formatter = new Intl.DateTimeFormat('cs-CZ', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
