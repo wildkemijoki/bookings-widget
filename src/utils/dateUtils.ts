@@ -56,7 +56,7 @@ export function calculatePickupAndReturnTime(
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-    timeZone: timezone
+    timeZone: "Europe/Helsinki"
   });
 
   const earliestPickup = formatter.format(earliestPickupDate);
