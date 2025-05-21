@@ -257,7 +257,7 @@ export function ExperienceDetail({ experience, onClose, onBook }: ExperienceDeta
                             className="text-gray-600 space-y-2 whitespace-pre-line">
                             dangerouslySetInnerHTML={{ __html: experience.knowBeforeYouGo }}
                             </div>
-                        )} : {}
+                        ) : ()}
                       </div>
                     </div>
                   </CollapsiblePanel>
