@@ -91,7 +91,6 @@ export function OptionsStep({
                 bookingState.date || undefined,
                 location.pickupWindow || 0
               );
-      console.log("times", times);
 
               return (
                 <label 
