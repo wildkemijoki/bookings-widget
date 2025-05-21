@@ -113,7 +113,7 @@ export function Calendar({
       if (!response.ok) throw new Error('Failed to fetch available slots');
 
       const data = await response.json();
-
+      console.log(data);
       // Set first available month if not set
       if (!firstAvailableMonth && data.slots.length > 0) {
         const firstDate = new Date(data.slots[0].timeSlot.start);
