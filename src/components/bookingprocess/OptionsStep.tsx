@@ -38,7 +38,7 @@ export function OptionsStep({
   }
 
   // Check if transportation is available
-  console.log(timeSlot.transportAvailable);
+  console.log(timeSlot);
   const transportAvailable = timeSlot.pickupPlaces?.length > 0 && timeSlot.transportAvailable;
 
   return (
