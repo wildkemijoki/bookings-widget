@@ -147,12 +147,12 @@ export function ReviewStep({
     setShowDiscountInput(true);
   };
 
-  const formatDate = (date: string) => {
+  const formatDate = (dateISO: string, timezone = "Europe/Helsinki") => {
     return DateTime
-    .fromISO(date, { zone: 'utc' })       // or zone: 'Europe/Helsinki' if it's already in that tz
-    .setZone(experience.timezone || "Europe/Helsinki")                       // display in this time zone
-    .setLocale('cs')                         // Czech locale
-    .toLocaleString(DateTime.DATE_FULL); // full format
+      .fromISO(dateISO, { zone: 'utc' })        // parse ISO string assuming UTC (or adjust if different)
+      .setZone(timezone)                        // convert to experience timezone
+      .setLocale('cs')                          // Czech locale
+      .toLocaleString(DateTime.DATE_FULL);     // full date format like "20. listopadu 2025"
   };
 
   const totalParticipants = Object.values(bookingState.participants).reduce((sum, count) => sum + count, 0);
