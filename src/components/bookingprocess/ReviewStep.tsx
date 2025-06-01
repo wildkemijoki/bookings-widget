@@ -148,7 +148,6 @@ export function ReviewStep({
   };
 
   const formatDate = (date: Date) => {
-    console.log(date.toString());
     return DateTime
     .fromISO(date, { zone: 'utc' })       // or zone: 'Europe/Helsinki' if it's already in that tz
     .setZone(experience.timezone || "Europe/Helsinki")                       // display in this time zone
@@ -270,7 +269,7 @@ export function ReviewStep({
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-gray-600">
               <Calendar className="w-5 h-5" />
-              {console.log(bookingState.date)}
+              {console.log(bookingState)}
               <span>{bookingState.date ? formatDate(bookingState.date) : 'Date not selected'}</span>
             </div>
             
