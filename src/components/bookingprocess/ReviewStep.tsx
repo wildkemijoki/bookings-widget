@@ -147,13 +147,18 @@ export function ReviewStep({
     setShowDiscountInput(true);
   };
 
-  const formatDate = (dateISO: string, timezone = "Europe/Helsinki") => {
-    return DateTime
-      .fromISO(dateISO, { zone: 'utc' })        // parse ISO string assuming UTC (or adjust if different)
-      .setZone(timezone)                        // convert to experience timezone
-      .setLocale('cs')                          // Czech locale
-      .toLocaleString(DateTime.DATE_FULL);     // full date format like "20. listopadu 2025"
-  };
+  const formatDate = (date: string | Date) => {
+    let dt;
+    if (typeof date === 'string') {
+      dt = DateTime.fromISO(date, { zone: 'utc' });
+    } else {
+      dt = DateTime.fromJSDate(date, { zone: 'utc' });
+    }
+  
+    return dt.setZone('Europe/Helsinki')
+             .setLocale('cs')
+             .toLocaleString(DateTime.DATE_FULL);
+  };    
 
   const totalParticipants = Object.values(bookingState.participants).reduce((sum, count) => sum + count, 0);
   const currency = bookingState.selectedTimeSlot?.currency || experience.currency || 'EUR';
