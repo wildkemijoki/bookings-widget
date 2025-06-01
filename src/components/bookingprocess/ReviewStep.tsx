@@ -148,6 +148,7 @@ export function ReviewStep({
   };
 
   const formatDate = (date: Date) => {
+    console.log(date);
     return DateTime
     .fromISO(date, { zone: 'utc' })       // or zone: 'Europe/Helsinki' if it's already in that tz
     .setZone(experience.timezone || "Europe/Helsinki")                       // display in this time zone
