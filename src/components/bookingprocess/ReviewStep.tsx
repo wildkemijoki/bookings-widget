@@ -3,6 +3,7 @@ import { Calendar, Clock, Users, MapPin, Tag, Check } from 'lucide-react';
 import type { Experience, BookingState, ParticipantCategory } from '../../types';
 import { calculatePickupAndReturnTime } from '../../utils/dateUtils';
 import { formatPrice } from '../../utils/formatters';
+import { DateTime } from 'luxon';
 import { WidgetConfigContext } from '../../context/WidgetContext';
 
 interface ReviewStepProps {
@@ -147,13 +148,11 @@ export function ReviewStep({
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: experience.timezone
-    }).format(date);
+    return DateTime
+    .fromISO(date, { zone: 'utc' })       // or zone: 'Europe/Helsinki' if it's already in that tz
+    .setZone(experience.timezone || "Europe/Helsinki")                       // display in this time zone
+    .setLocale('cs')                         // Czech locale
+    .toLocaleString(DateTime.DATE_FULL); // full format
   };
 
   const totalParticipants = Object.values(bookingState.participants).reduce((sum, count) => sum + count, 0);
@@ -270,6 +269,7 @@ export function ReviewStep({
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-gray-600">
               <Calendar className="w-5 h-5" />
+              {console.log(bookingState.date)}
               <span>{bookingState.date ? formatDate(bookingState.date) : 'Date not selected'}</span>
             </div>
             

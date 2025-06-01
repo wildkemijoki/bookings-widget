@@ -10,11 +10,11 @@ export function formatTimeInTimezone(time: string, timezone: string, date?: Date
   dateWithTime.setHours(hours, minutes, 0, 0);
 
   // Format the time in the specified timezone
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('cs-CZ', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-    timeZone: timezone
+    timeZone: timezone || "Europe/Helsinki"
   }).format(dateWithTime);
 }
 
