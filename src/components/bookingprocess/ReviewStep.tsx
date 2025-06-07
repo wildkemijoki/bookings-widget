@@ -161,7 +161,6 @@ export function ReviewStep({
              .setLocale('cs')
              .toLocaleString(DateTime.DATE_MED);
     console.log(newDt.toString());
-    
     return newDt;
   };    
 
