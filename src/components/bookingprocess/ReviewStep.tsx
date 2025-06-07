@@ -149,10 +149,10 @@ export function ReviewStep({
 
   const formatDate = (date: string | Date) => {
     let dt;
-    console.log(typeof date);
     if (typeof date === 'string') {
       dt = DateTime.fromISO(date, { zone: 'utc' });
     } else {
+    console.log(typeof date);
       dt = DateTime.fromJSDate(date, { zone: 'utc' });
     }
   
