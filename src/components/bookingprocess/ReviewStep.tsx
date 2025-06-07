@@ -148,6 +148,7 @@ export function ReviewStep({
   };
 
   const formatDate = (date: string | Date) => {
+    console.log('Date: ', date);
     let dt;
     if (typeof date === 'string') {
       dt = DateTime.fromISO(date, { zone: 'utc' });
