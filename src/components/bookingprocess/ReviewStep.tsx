@@ -157,9 +157,11 @@ export function ReviewStep({
 
     console.log(dt.toString());
   
-    return dt.setZone('Europe/Helsinki')
+    const newDt = dt.setZone('Europe/Helsinki')
              .setLocale('cs')
              .toLocaleString(DateTime.DATE_MED);
+    console.log(newDt.toString());
+    return newDt;
   };    
 
   const totalParticipants = Object.values(bookingState.participants).reduce((sum, count) => sum + count, 0);
