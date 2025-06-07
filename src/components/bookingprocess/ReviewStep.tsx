@@ -152,7 +152,8 @@ export function ReviewStep({
     if (typeof date === 'string') {
       dt = DateTime.fromISO(date, { zone: 'utc' });
     } else {
-    console.log(typeof date);
+      console.log(typeof date);
+      console.log(date.toString());
       dt = DateTime.fromJSDate(date, { zone: 'utc' });
     }
   
