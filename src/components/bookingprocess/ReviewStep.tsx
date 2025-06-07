@@ -159,7 +159,7 @@ export function ReviewStep({
   
     const newDt = dt.setZone('Europe/Helsinki')
              .setLocale('cs')
-             .toLocaleString(DateTime.DATE_MED);
+             .toLocaleString(DateTime.DATE_LONG);
     console.log(newDt.toString());
     return newDt;
   };    
