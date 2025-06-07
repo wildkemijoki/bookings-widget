@@ -153,7 +153,7 @@ export function ReviewStep({
       dt = DateTime.fromISO(date, { zone: 'utc' });
     } else {
       console.log(typeof date);
-      console.log(date);
+      console.log(date.toISOString());
       dt = DateTime.fromJSDate(date, { zone: 'utc' });
     }
   
