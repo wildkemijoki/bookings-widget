@@ -155,7 +155,7 @@ export function ReviewStep({
       dt = DateTime.fromJSDate(date, { zone: 'utc' });
     }
 
-    console.log(dt.toISOString());
+    console.log(dt.toString());
   
     return dt.setZone('Europe/Helsinki')
              .setLocale('cs')
