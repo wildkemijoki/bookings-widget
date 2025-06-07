@@ -154,13 +154,10 @@ export function ReviewStep({
     } else {
       dt = DateTime.fromJSDate(date);
     }
-
-    console.log(dt.toString());
   
     const newDt = dt.setZone('Europe/Helsinki')
              .setLocale('cs')
              .toLocaleString(DateTime.DATE_MED);
-    console.log(newDt.toString(), ';');
     return newDt;
   };    
 
