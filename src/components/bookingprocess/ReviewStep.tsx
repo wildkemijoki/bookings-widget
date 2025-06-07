@@ -148,7 +148,6 @@ export function ReviewStep({
   };
 
   const formatDate = (date: string | Date) => {
-    console.log('Date: ', date);
     let dt;
     if (typeof date === 'string') {
       dt = DateTime.fromISO(date, { zone: 'utc' });
@@ -275,7 +274,6 @@ export function ReviewStep({
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-gray-600">
               <Calendar className="w-5 h-5" />
-              {console.log(bookingState)}
               <span>{bookingState.date ? formatDate(bookingState.date) : 'Date not selected'}</span>
             </div>
             
