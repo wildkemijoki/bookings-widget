@@ -152,10 +152,10 @@ export function ReviewStep({
     if (typeof date === 'string') {
       dt = DateTime.fromISO(date, { zone: 'utc' });
     } else {
-      console.log(typeof date);
-      console.log(date.toISOString());
       dt = DateTime.fromJSDate(date, { zone: 'utc' });
     }
+
+    console.log(dt.toISOString());
   
     return dt.setZone('Europe/Helsinki')
              .setLocale('cs')
